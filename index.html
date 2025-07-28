@@ -2,153 +2,237 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Download & Upload Animation</title>
-  <script src="https://unpkg.com/feather-icons"></script>
+  <title>Download Animation Button</title>
   <style>
     body {
-      margin: 0;
-      height: 100vh;
-      background: linear-gradient(135deg, #000428, #004e92, #ff0080, #7928ca, #2afadf);
-      background-size: 400% 400%;
-      animation: gradientShift 15s ease infinite;
-      font-family: Arial, sans-serif;
+      background: #fff;
       display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      gap: 40px;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .button-container {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
       justify-content: center;
       align-items: center;
-    }
-
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .container {
-      display: flex;
-      gap: 30px;
     }
 
     .button {
       position: relative;
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 14px 24px;
-      border-radius: 30px;
-      background-color: #1848fe;
-      color: white;
-      font-size: 16px;
+      gap: 10px;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 500;
+      border: none;
       cursor: pointer;
       overflow: hidden;
-      transition: 0.3s;
-      box-shadow: 0 0 15px #1848fe;
-      min-width: 160px;
+      transition: all 0.4s ease;
     }
 
-    .button i {
-      stroke: white;
-      transition: 0.3s;
+    .blue {
+      background: #1a73e8;
+      color: white;
+    }
+
+    .dark {
+      background: #0f1622;
+      color: white;
+    }
+
+    .button .icon {
+      width: 18px;
+      height: 18px;
+      display: inline-block;
+    }
+
+    .button svg {
+      fill: currentColor;
+      width: 100%;
+      height: 100%;
+    }
+
+    .button .label {
+      transition: opacity 0.3s ease;
+      white-space: nowrap;
     }
 
     .progress-bar {
       position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 4px;
-      background: #00ffcc;
+      top: 0;
+      right: 0;
+      height: 100%;
       width: 0%;
-      transition: width 2s ease;
+      background-color: rgba(255, 255, 255, 0.5);
+      animation: fillBar 2s forwards;
     }
 
-    .button.loading {
-      pointer-events: none;
-      opacity: 0.8;
+    @keyframes fillBar {
+      from { width: 0%; }
+      to { width: 100%; }
     }
 
-    .button.success {
-      background-color: #28a745;
-      box-shadow: 0 0 10px #28a745;
+    .square-btn,
+    .small-box {
+      width: 45px;
+      height: 45px;
+      background: #0f1622;
+      border: none;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      font-size: 18px;
     }
 
-    .button .text {
-      transition: 0.3s;
+    .square-btn svg,
+    .small-box svg {
+      fill: white;
+      width: 20px;
+      height: 20px;
+    }
+
+    .tick-icon {
+      display: none;
+      color: limegreen;
+    }
+
+    .square-btn.show-tick svg,
+    .small-box.show-tick svg {
+      display: none;
+    }
+
+    .square-btn.show-tick .tick-icon,
+    .small-box.show-tick .tick-icon {
+      display: inline;
+    }
+
+    .button.open .label,
+    .button.downloading .label {
+      opacity: 0;
+    }
+
+    .button.open .label-open,
+    .button.downloading .label-loading {
+      opacity: 1;
+    }
+
+    .label-open,
+    .label-loading {
+      position: absolute;
+      left: 28px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tick {
+      color: limegreen;
+      font-size: 18px;
+    }
+
+    .button.downloading .icon,
+    .button.open .icon {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="button" id="downloadBtn">
-      <i data-feather="download"></i>
-      <span class="text">Download</span>
-      <div class="progress-bar"></div>
+
+  <!-- Row 1 -->
+  <div class="button-container">
+    <button class="button blue" onclick="handleDownload(this)">
+      <span class="label">Download</span>
+      <span class="label-loading">Downloading...</span>
+      <span class="label-open">Open File <span class="tick">✔</span></span>
+      <span class="icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 16l4-5h-3V4h-2v7H8l4 5zm-6 2v2h12v-2H6z"/>
+        </svg>
+      </span>
+    </button>
+
+    <button class="square-btn" onclick="triggerNearbyDownload(this)">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 16l4-5h-3V4h-2v7H8l4 5zm-6 2v2h12v-2H6z"/>
+      </svg>
+      <span class="tick-icon">✔</span>
+    </button>
+  </div>
+
+  <!-- Row 2 -->
+  <div class="button-container">
+    <div class="small-box" onclick="triggerNearbyDownload(this)">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 16l4-5h-3V4h-2v7H8l4 5zm-6 2v2h12v-2H6z"/>
+      </svg>
+      <span class="tick-icon">✔</span>
     </div>
 
-    <div class="button" id="uploadBtn">
-      <i data-feather="upload"></i>
-      <span class="text">Upload</span>
-      <div class="progress-bar"></div>
-    </div>
+    <button class="button dark" onclick="handleDownload(this)">
+      <span class="label">Download</span>
+      <span class="label-loading">Downloading...</span>
+      <span class="label-open">Open File <span class="tick">✔</span></span>
+      <span class="icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 16l4-5h-3V4h-2v7H8l4 5zm-6 2v2h12v-2H6z"/>
+        </svg>
+      </span>
+    </button>
   </div>
 
   <script>
-    feather.replace();
+    function handleDownload(btn) {
+      if (btn.classList.contains('open') || btn.classList.contains('downloading')) return;
 
-    function handleDownload() {
-      const button = document.getElementById("downloadBtn");
-      const icon = button.querySelector("i");
-      const text = button.querySelector(".text");
-      const bar = button.querySelector(".progress-bar");
+      btn.classList.add('downloading');
 
-      button.classList.add("loading");
-      text.textContent = "Downloading...";
-      bar.style.width = "100%";
+      const bar = document.createElement('div');
+      bar.classList.add('progress-bar');
+      btn.appendChild(bar);
+
+      // Find the nearest blackbox (previous or next sibling)
+      const container = btn.parentElement;
+      const blackbox = Array.from(container.children).find(el =>
+        el !== btn && (el.classList.contains('square-btn') || el.classList.contains('small-box'))
+      );
 
       setTimeout(() => {
-        icon.setAttribute("data-feather", "check");
-        feather.replace();
-        text.textContent = "Done!";
-        button.classList.remove("loading");
-        button.classList.add("success");
-        bar.style.width = "0%";
+        btn.classList.remove('downloading');
+        btn.classList.add('open');
+        bar.remove();
 
-        setTimeout(() => {
-          icon.setAttribute("data-feather", "file-text");
-          feather.replace();
-          text.textContent = "Open File";
-        }, 1500);
+        if (blackbox) {
+          blackbox.classList.add('show-tick');
+        }
       }, 2000);
     }
 
-    function handleUpload() {
-      const button = document.getElementById("uploadBtn");
-      const icon = button.querySelector("i");
-      const text = button.querySelector(".text");
-      const bar = button.querySelector(".progress-bar");
+    function triggerNearbyDownload(blackbox) {
+      const container = blackbox.parentElement;
+      const downloadBtn = Array.from(container.children).find(el =>
+        el.classList.contains('button')
+      );
 
-      button.classList.add("loading");
-      text.textContent = "Uploading...";
-      bar.style.width = "100%";
-
-      setTimeout(() => {
-        icon.setAttribute("data-feather", "check");
-        feather.replace();
-        text.textContent = "Done!";
-        button.classList.remove("loading");
-        button.classList.add("success");
-        bar.style.width = "0%";
-
-        setTimeout(() => {
-          icon.setAttribute("data-feather", "upload");
-          feather.replace();
-          text.textContent = "Upload";
-          button.classList.remove("success");
-        }, 1500);
-      }, 2000);
+      if (downloadBtn) {
+        handleDownload(downloadBtn);
+      }
     }
-
-    document.getElementById("downloadBtn").addEventListener("click", handleDownload);
-    document.getElementById("uploadBtn").addEventListener("click", handleUpload);
   </script>
+
 </body>
 </html>
